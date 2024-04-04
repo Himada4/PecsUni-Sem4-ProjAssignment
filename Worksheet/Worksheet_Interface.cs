@@ -53,7 +53,7 @@ namespace FM91U5.Worksheet
                 
                 Main_Container.Controls.Add(new Label() { Text = work.NameOfWork, Anchor = AnchorStyles.Left }, 0, currentRow);
                 Main_Container.Controls.Add(new Label() { Text = $"{work.MaterialCosts}", Anchor = AnchorStyles.Left }, 1, currentRow);
-                Main_Container.Controls.Add(new Label() { Text = $"{work.RequiredTimeInMinutes} mins", Anchor = AnchorStyles.Left }, 2, currentRow);
+                Main_Container.Controls.Add(new Label() { Text = $"{work.ServiceHour} Hours {work.ServiceMinute} Min", Anchor = AnchorStyles.Left}, 2, currentRow);
 
                 
                 double ratio = (double)work.RequiredTimeInMinutes / 60;
@@ -164,7 +164,7 @@ namespace FM91U5.Worksheet
         {
             if (hasUnsavedChanges)
             {
-                DialogResult response = MessageBox.Show("You have unsaved changes. Are you sure you want to close?", "Confirm", MessageBoxButtons.YesNo);
+                DialogResult response = MessageBox.Show("You have unsaved changes. Are you sure you want to close?", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (response == DialogResult.No)
                 {
                     e.Cancel = true;

@@ -37,6 +37,8 @@ namespace FM91U5
 
                 Loader<Work> loader = new Loader<Work>();
                 works = loader.LoadFile(filePath);
+                MessageBox.Show("File loaded successfully.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
 
                 worksheetToolStripMenuItem.Enabled = true;
             }
@@ -58,9 +60,7 @@ namespace FM91U5
         private void WorksheetUpdatedHandler(object sender, List<Work> updatedWorks)
         {
             works = updatedWorks;
-            //Disable Worksheet, enable Payement or Load file
-
-            //prevent user from clicking worksheet again, oh wait just disable the worksheet button after "register" just do it
+            
             worksheetToolStripMenuItem.Enabled = false;
             paymentToolStripMenuItem.Enabled = true;
             works_list.Add(works);
@@ -85,9 +85,14 @@ namespace FM91U5
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            this.Close();
+        }
+
+        private void Main_Interface_FormClosing(object sender, FormClosingEventArgs e)
+        {
             DialogResult dialogResult = MessageBox.Show("Are you sure you want to exit?", "Exit Application", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
-            if (dialogResult == DialogResult.Yes) Application.Exit();
+            if (dialogResult == DialogResult.No) e.Cancel = true;
         }
     }
 }

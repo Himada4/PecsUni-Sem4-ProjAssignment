@@ -90,7 +90,7 @@ namespace FM91U5.Payement
                 {
                     workCount++;
                     totalMaterialCost += work_list[i][j].MaterialCosts;
-                    totalInvoiceTime += common.RoundUpToMultipleOf30(work_list[i][j].ServiceMinute);
+                    totalInvoiceTime += common.RoundUpToMultipleOf30(work_list[i][j].RequiredTimeInMinutes);
                 }
 
             }
