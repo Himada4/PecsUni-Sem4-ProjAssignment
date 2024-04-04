@@ -37,21 +37,21 @@
             this.Main_Container.Dock = System.Windows.Forms.DockStyle.Fill;
             this.Main_Container.Location = new System.Drawing.Point(0, 0);
             this.Main_Container.Name = "Main_Container";
-            this.Main_Container.Size = new System.Drawing.Size(194, 181);
+            this.Main_Container.Size = new System.Drawing.Size(234, 191);
             this.Main_Container.TabIndex = 0;
             // 
             // Payment_Interface
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(194, 181);
+            this.ClientSize = new System.Drawing.Size(234, 191);
             this.Controls.Add(this.Main_Container);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximumSize = new System.Drawing.Size(210, 220);
-            this.MinimumSize = new System.Drawing.Size(210, 220);
+            this.MaximumSize = new System.Drawing.Size(250, 230);
+            this.MinimumSize = new System.Drawing.Size(250, 230);
             this.Name = "Payment_Interface";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Payment_Interface";
+            this.Text = "Invoice";
             this.ResumeLayout(false);
 
         }

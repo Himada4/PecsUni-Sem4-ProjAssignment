@@ -50,17 +50,17 @@ namespace FM91U5.Worksheet
                 Main_Container.RowStyles.Add(new RowStyle(SizeType.Absolute, 30F)); 
                 
 
-                // Add controls/data for each column
+                
                 Main_Container.Controls.Add(new Label() { Text = work.NameOfWork, Anchor = AnchorStyles.Left }, 0, currentRow);
                 Main_Container.Controls.Add(new Label() { Text = $"{work.MaterialCosts}", Anchor = AnchorStyles.Left }, 1, currentRow);
                 Main_Container.Controls.Add(new Label() { Text = $"{work.RequiredTimeInMinutes} mins", Anchor = AnchorStyles.Left }, 2, currentRow);
 
-                // Add service fee info
+                
                 double ratio = (double)work.RequiredTimeInMinutes / 60;
                 int serviceFee = (int)(ratio * 15000);
                 Main_Container.Controls.Add(new Label() { Text = "0", Name = $"{id}_l",Anchor = AnchorStyles.Left , TextAlign = ContentAlignment.MiddleCenter}, 4, currentRow);
 
-                // Add CheckBox for "Select" column
+               
                 CheckBox selectCheckBox = new CheckBox();
                 selectCheckBox.Name = $"{id++}";
                 selectCheckBox.Padding = new Padding(36, 0, 0, 0);
@@ -79,17 +79,14 @@ namespace FM91U5.Worksheet
             Header_Container.ColumnStyles.Clear();
             for (int i = 0; i < Header_Container.ColumnCount - 1; i++)
             {
-                // Set the width of the first 4 columns
                 Header_Container.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25f));
             }
-
-            // Add extra width for the last column to account for the scrollbar
             int scrollBarWidth = SystemInformation.VerticalScrollBarWidth;
-            float lastColumnWidth = 25f + (100f * scrollBarWidth / Header_Container.Width);
+            float lastColumnWidth = 25f + (works.Count > 14 ? (100f * scrollBarWidth / Header_Container.Width) : 0);
             Header_Container.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, lastColumnWidth));
 
 
-            // Adding headers
+            
             Header_Container.Controls.Add(new Label() { Text = "Name Of Work", Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleCenter }, 0, 0);
             Header_Container.Controls.Add(new Label() { Text = "Material Cost", Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleCenter }, 1, 0);
             Header_Container.Controls.Add(new Label() { Text = "Time", Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleCenter }, 2, 0);
@@ -100,6 +97,7 @@ namespace FM91U5.Worksheet
         private void CheckBox_CheckedChanged(object sender, EventArgs e)
         {
             CheckBox clickedCheckBox = (CheckBox)sender;
+            Common common = new Common();
 
             if (clickedCheckBox.Checked)
             {
@@ -107,13 +105,13 @@ namespace FM91U5.Worksheet
                 int updatedValueMC = previousValueMC + works[int.Parse(clickedCheckBox.Name)].MaterialCosts;
 
                 int previousValueSC = int.Parse(Invoiced_Service_Cost_Display.Text);
-                int updatedValueSC = previousValueSC + getServiceFee(RoundUpToMultipleOf30(works[int.Parse(clickedCheckBox.Name)].RequiredTimeInMinutes));
+                int updatedValueSC = previousValueSC + common.getServiceFee(common.RoundUpToMultipleOf30(works[int.Parse(clickedCheckBox.Name)].RequiredTimeInMinutes));
 
                 foreach (Control control in Main_Container.Controls)
                 {
                     if (control is Label label && label.Name == $"{clickedCheckBox.Name}_l")
                     {
-                        label.Text = getServiceFee(works[int.Parse(clickedCheckBox.Name)].RequiredTimeInMinutes).ToString();
+                        label.Text = common.getServiceFee(works[int.Parse(clickedCheckBox.Name)].RequiredTimeInMinutes).ToString();
                     }
                 }
 
@@ -126,7 +124,7 @@ namespace FM91U5.Worksheet
                 int updatedValueMC = previousValueMC - works[int.Parse(clickedCheckBox.Name)].MaterialCosts;
 
                 int previousValueSC = int.Parse(Invoiced_Service_Cost_Display.Text);
-                int updatedValueSC = previousValueSC - getServiceFee(RoundUpToMultipleOf30(works[int.Parse(clickedCheckBox.Name)].RequiredTimeInMinutes));
+                int updatedValueSC = previousValueSC - common.getServiceFee(common.RoundUpToMultipleOf30(works[int.Parse(clickedCheckBox.Name)].RequiredTimeInMinutes));
 
                 foreach (Control control in Main_Container.Controls)
                 {
@@ -142,17 +140,7 @@ namespace FM91U5.Worksheet
             
         }
 
-        int getServiceFee(int time)
-        {
-            double ratio = (double)time / 60;
-            int serviceFee = (int)(ratio * 15000);
-            return serviceFee;
-        }
-
-        int RoundUpToMultipleOf30(int value)
-        {
-            return (int)(Math.Ceiling((double)value / 30) * 30);
-        }
+        
 
         private void Register_Btn_Click(object sender, EventArgs e)
         {

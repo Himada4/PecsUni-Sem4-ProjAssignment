@@ -17,23 +17,34 @@ namespace FM91U5
     {
         List<Work> works;
         List<List<Work>> works_list = new List<List<Work>>();
-        private DateTime startTime;
         public Main_Interface()
         {
             InitializeComponent();
+            worksheetToolStripMenuItem.Enabled = false;
+            paymentToolStripMenuItem.Enabled = false;
         }
 
         private void loadFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string filePath;
-            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            try
             {
-                if (openFileDialog.ShowDialog() != DialogResult.OK) return;
-                filePath = openFileDialog.FileName;
-            }
+                string filePath;
+                using (OpenFileDialog openFileDialog = new OpenFileDialog())
+                {
+                    if (openFileDialog.ShowDialog() != DialogResult.OK) return;
+                    filePath = openFileDialog.FileName;
+                }
 
-            Loader<Work> loader = new Loader<Work>();
-            works = loader.LoadFile(filePath);
+                Loader<Work> loader = new Loader<Work>();
+                works = loader.LoadFile(filePath);
+
+                worksheetToolStripMenuItem.Enabled = true;
+            }
+            catch
+            {
+                MessageBox.Show("An error occurred, please select a valid file!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            
         }
 
         private void worksheetToolStripMenuItem_Click(object sender, EventArgs e)
@@ -41,6 +52,7 @@ namespace FM91U5
             Worksheet_Interface worksheet_Interface = new Worksheet_Interface(works);
             worksheet_Interface.WorksheetUpdated += WorksheetUpdatedHandler;
             worksheet_Interface.Show();
+            
         }
 
         private void WorksheetUpdatedHandler(object sender, List<Work> updatedWorks)
@@ -49,7 +61,8 @@ namespace FM91U5
             //Disable Worksheet, enable Payement or Load file
 
             //prevent user from clicking worksheet again, oh wait just disable the worksheet button after "register" just do it
-
+            worksheetToolStripMenuItem.Enabled = false;
+            paymentToolStripMenuItem.Enabled = true;
             works_list.Add(works);
         }
 
@@ -58,6 +71,10 @@ namespace FM91U5
             
             Payment_Interface payment_Interface = new Payment_Interface(works_list);
             payment_Interface.Show();
+            works_list.Clear();
+            works.Clear();
+            paymentToolStripMenuItem.Enabled = false;
+            worksheetToolStripMenuItem.Enabled = false;
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)

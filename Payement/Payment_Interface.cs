@@ -26,80 +26,13 @@ namespace FM91U5.Payement
 
         private void FillForm()
         {
-            /*
-             * Worksheet Count:
-             * Work Count:
-             * 
-             * Total Material Cost:
-             * Service Cost:
-             * Invoiced Service Time:
-             * Total:
-             * 
-             *  
-             *
-             * 
-             */
-
-            
-
-            //dynamic
-            Label worksheetCount = new Label();     //
-            Label workCount = new Label();          //
-            Label totalMaterialCost = new Label();  //
-            Label totalServiceCost = new Label();   //
-            Label usageInvoice = new Label();
-            Label total = new Label();              //
-
-
-           
-
-            int workAmt = 0;
-            int materialCost = 0;
-            int serviceTime = 0;
-            int serviceCost = 0;
-            for (int i = 0; i < work_list.Count; i++)
-            {
-                for (int j = 0; j < work_list[i].Count; j++) 
-                {
-                    workAmt++;
-                    materialCost += work_list[i][j].MaterialCosts;
-                    //serviceTime += work_list[i][j].ServiceMinute;
-                }
-                
-            }
-            //Worksheet Count:
-            worksheetCount.Text = work_list.Count.ToString();
-
-            //Work Count:
-            workCount.Text = workAmt.ToString();
-
-            //Total Material Cost:
-            totalMaterialCost.Text = materialCost.ToString();
-            
-            //Total Service Cost
-            totalServiceCost.Text = serviceTime.ToString();
-
-            //Total Usage Service Invoice
-            usageInvoice.Text = "s";//getFee().ToString();
-
-            //Final Total Cost
-            total.Text = (materialCost + serviceCost).ToString();// + getFee()).ToString();
-
-            List<Label> labels = new List<Label>() { worksheetCount, workCount, totalMaterialCost, totalServiceCost, usageInvoice, total};
-
-            int Xpos = 160;
-            int Ypos = 10;
-            foreach (Label label in labels)
-            {
-                label.Location = new Point(Xpos, Ypos);
-                Ypos += 30;
-                Main_Container.Controls.Add(label);
-            }
+            fillStaticFields();
+            fillDynamicFields();
         }
 
-        private void setStaticLabels()
+        private void fillStaticFields()
         {
-            //static
+            
             Label labelWSC = new Label();
             Label labelWC = new Label();
             Label labelTMC = new Label();
@@ -107,10 +40,12 @@ namespace FM91U5.Payement
             Label labelTSC = new Label();
             Label labelT = new Label();
 
+            labelWSC.AutoSize = true;
             labelWSC.Text = "Registered Worksheets:";
             labelWC.Text = "Registered Works:";
             labelTMC.Text = "Total Material Cost:";
             labelTST.Text = "Total Service Cost:";
+            labelTSC.AutoSize = true;
             labelTSC.Text = "Invoiced Service Time:";
             labelT.Text = "Total:";
 
@@ -125,6 +60,68 @@ namespace FM91U5.Payement
                 Main_Container.Controls.Add(label);
             }
 
+        }
+        void fillDynamicFields()
+        {
+            /*
+             *Numberof registered worksheets
+              Numberof registered works
+              Material cost
+              Service cost
+              Total invoiced service time
+              Total amount to pay
+             */
+
+            Common common = new Common();
+            
+            Label worksheetCount_Label = new Label();     //
+            Label workCount_Label = new Label();          //
+            Label totalMaterialCost_Label = new Label();  //
+            Label totalServiceCost_Label = new Label();   //
+            Label totalInvoiceTime_Label = new Label();
+            Label total_Label = new Label();              //
+
+            int workCount = 0;
+            int totalMaterialCost = 0;
+            int totalInvoiceTime = 0;
+            for (int i = 0; i < work_list.Count; i++)
+            {
+                for (int j = 0; j < work_list[i].Count; j++)
+                {
+                    workCount++;
+                    totalMaterialCost += work_list[i][j].MaterialCosts;
+                    totalInvoiceTime += common.RoundUpToMultipleOf30(work_list[i][j].ServiceMinute);
+                }
+
+            }
+            //Worksheet Count:
+            worksheetCount_Label.Text = work_list.Count.ToString();
+
+            //Work Count:
+            workCount_Label.Text = workCount.ToString();
+
+            //Total Material Cost:
+            totalMaterialCost_Label.Text = totalMaterialCost.ToString();
+
+            //Total Service Cost
+            totalServiceCost_Label.Text = common.getServiceFee(totalInvoiceTime).ToString();
+
+            //Total Usage Service Invoice
+            totalInvoiceTime_Label.Text = totalInvoiceTime.ToString() + " minutes";
+
+            //Final Total Cost
+            total_Label.Text = (totalMaterialCost + common.getServiceFee(totalInvoiceTime)).ToString();// + getFee()).ToString();
+
+            List<Label> labels = new List<Label>() { worksheetCount_Label, workCount_Label, totalMaterialCost_Label, totalServiceCost_Label, totalInvoiceTime_Label, total_Label };
+
+            int Xpos = 160;
+            int Ypos = 10;
+            foreach (Label label in labels)
+            {
+                label.Location = new Point(Xpos, Ypos);
+                Ypos += 30;
+                Main_Container.Controls.Add(label);
+            }
         }
     }
 }
