@@ -27,69 +27,74 @@ namespace FM91U5.Worksheet
 
         private void fillForm()
         {
-            Main_Container.HorizontalScroll.Maximum = 0;
-            Main_Container.VerticalScroll.Visible = false;
-            Main_Container.AutoScroll = true;
-            Main_Container.AutoScrollPosition = Point.Empty;
-            int XposNOW = 10;
-            int XposRTIM = 170;
-            int XposMC = 280;
-            int XposCB = 350;
+            fillHeader();
+            fillItems();
+        }
 
-            //Nameof work; Required time in minutes; Material costs
-            Label NOW = new Label();
-            Label RTIM = new Label();
-            Label MC = new Label();
-
-            NOW.Text = "Name Of Work";
-            RTIM.Text = "Required Time In Minutes";
-            MC.Text = "Material Costs";
-
-            NOW.Location = new Point(XposNOW, 20);
-            RTIM.Location = new Point(XposRTIM, 20);
-            MC.Location = new Point(XposMC, 20);
-
-            NOW.Font = new Font(NOW.Font, FontStyle.Bold);
-            RTIM.Font = new Font(RTIM.Font, FontStyle.Bold);
-            MC.Font = new Font(MC.Font, FontStyle.Bold);
-
-            Main_Container.Controls.Add(NOW);
-            Main_Container.Controls.Add(RTIM);
-            Main_Container.Controls.Add(MC);
-
-             
-            int Ypos = 50;
-            int id = 0;
-
-            foreach (Work work in works)
+        private void fillItems()
+        {
+            Main_Container.ColumnCount = 5;
+            Main_Container.RowCount = works.Count;
+            
+            Main_Container.ColumnStyles.Clear();
+            for (int i = 0; i < Main_Container.ColumnCount; i++)
             {
-                CheckBox checkBox = new CheckBox();
-                checkBox.Name = $"{id++}";
-                checkBox.Location = new Point(XposCB, Ypos - 5);
-                checkBox.CheckedChanged += CheckBox_CheckedChanged;
-                Main_Container.Controls.Add(checkBox);
-
-                Label labelNOW = new Label();
-                Label labelRTIM = new Label();
-                Label labelMC = new Label();
-
-                labelNOW.Text = work.NameOfWork;
-                labelRTIM.Text = work.RequiredTimeInMinutes.ToString() + " mins";
-                labelMC.Text = work.MaterialCosts.ToString();
-
-                labelNOW.Location = new Point(XposNOW, Ypos);
-                labelRTIM.Location = new Point(XposRTIM, Ypos);
-                labelMC.Location = new Point(XposMC, Ypos);
-
-                Main_Container.Controls.Add(labelNOW);
-                Main_Container.Controls.Add(labelRTIM);
-                Main_Container.Controls.Add(labelMC);
-
-
+                Main_Container.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100f / Main_Container.ColumnCount));
+            }
+            int currentRow = 0;
+            int id = 0;
+            Main_Container.RowStyles.Clear();
+            foreach (var work in works)
+            {
+                
+                Main_Container.RowStyles.Add(new RowStyle(SizeType.Absolute, 30F)); 
                 
 
-                Ypos += 100;
+                // Add controls/data for each column
+                Main_Container.Controls.Add(new Label() { Text = work.NameOfWork, Anchor = AnchorStyles.Left }, 0, currentRow);
+                Main_Container.Controls.Add(new Label() { Text = $"{work.MaterialCosts}", Anchor = AnchorStyles.Left }, 1, currentRow);
+                Main_Container.Controls.Add(new Label() { Text = $"{work.RequiredTimeInMinutes} mins", Anchor = AnchorStyles.Left }, 2, currentRow);
+
+                // Add service fee info
+                double ratio = (double)work.RequiredTimeInMinutes / 60;
+                int serviceFee = (int)(ratio * 15000);
+                Main_Container.Controls.Add(new Label() { Text = "0", Name = $"{id}_l",Anchor = AnchorStyles.Left , TextAlign = ContentAlignment.MiddleCenter}, 4, currentRow);
+
+                // Add CheckBox for "Select" column
+                CheckBox selectCheckBox = new CheckBox();
+                selectCheckBox.Name = $"{id++}";
+                selectCheckBox.Padding = new Padding(36, 0, 0, 0);
+                selectCheckBox.CheckedChanged += CheckBox_CheckedChanged;
+                Main_Container.Controls.Add(selectCheckBox, 3, currentRow);
+
+                currentRow++;
             }
+
+            
+        }
+
+        private void fillHeader()
+        {
+            Header_Container.ColumnCount = 5;
+            Header_Container.ColumnStyles.Clear();
+            for (int i = 0; i < Header_Container.ColumnCount - 1; i++)
+            {
+                // Set the width of the first 4 columns
+                Header_Container.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25f));
+            }
+
+            // Add extra width for the last column to account for the scrollbar
+            int scrollBarWidth = SystemInformation.VerticalScrollBarWidth;
+            float lastColumnWidth = 25f + (100f * scrollBarWidth / Header_Container.Width);
+            Header_Container.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, lastColumnWidth));
+
+
+            // Adding headers
+            Header_Container.Controls.Add(new Label() { Text = "Name Of Work", Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleCenter }, 0, 0);
+            Header_Container.Controls.Add(new Label() { Text = "Material Cost", Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleCenter }, 1, 0);
+            Header_Container.Controls.Add(new Label() { Text = "Time", Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleCenter }, 2, 0);
+            Header_Container.Controls.Add(new Label() { Text = "Select", Anchor = AnchorStyles.Left, TextAlign = ContentAlignment.MiddleCenter }, 3, 0);
+            Header_Container.Controls.Add(new Label() { Text = "Service Fee", Anchor = AnchorStyles.Left , TextAlign = ContentAlignment.MiddleCenter }, 4, 0);
         }
 
         private void CheckBox_CheckedChanged(object sender, EventArgs e)
@@ -101,24 +106,52 @@ namespace FM91U5.Worksheet
                 int previousValueMC = int.Parse(Material_Cost_Display.Text);
                 int updatedValueMC = previousValueMC + works[int.Parse(clickedCheckBox.Name)].MaterialCosts;
 
-                int previousValueTC = int.Parse(Time_Cost_Display.Text.Replace(" ", "").Replace("min", ""));
-                int updatedValueTC = previousValueTC + works[int.Parse(clickedCheckBox.Name)].RequiredTimeInMinutes;
+                int previousValueSC = int.Parse(Invoiced_Service_Cost_Display.Text);
+                int updatedValueSC = previousValueSC + getServiceFee(RoundUpToMultipleOf30(works[int.Parse(clickedCheckBox.Name)].RequiredTimeInMinutes));
+
+                foreach (Control control in Main_Container.Controls)
+                {
+                    if (control is Label label && label.Name == $"{clickedCheckBox.Name}_l")
+                    {
+                        label.Text = getServiceFee(works[int.Parse(clickedCheckBox.Name)].RequiredTimeInMinutes).ToString();
+                    }
+                }
 
                 Material_Cost_Display.Text = updatedValueMC.ToString();
-                Time_Cost_Display.Text = updatedValueTC.ToString() + " min";
+                Invoiced_Service_Cost_Display.Text = updatedValueSC.ToString();
             }
             else
             {
                 int previousValueMC = int.Parse(Material_Cost_Display.Text);
                 int updatedValueMC = previousValueMC - works[int.Parse(clickedCheckBox.Name)].MaterialCosts;
 
-                int previousValueTC = int.Parse(Time_Cost_Display.Text.Replace(" ", "").Replace("min", ""));
-                int updatedValueTC = previousValueTC - works[int.Parse(clickedCheckBox.Name)].RequiredTimeInMinutes;
+                int previousValueSC = int.Parse(Invoiced_Service_Cost_Display.Text);
+                int updatedValueSC = previousValueSC - getServiceFee(RoundUpToMultipleOf30(works[int.Parse(clickedCheckBox.Name)].RequiredTimeInMinutes));
+
+                foreach (Control control in Main_Container.Controls)
+                {
+                    if (control is Label label && label.Name == $"{clickedCheckBox.Name}_l")
+                    {
+                        label.Text = "0";
+                    }
+                }
 
                 Material_Cost_Display.Text = updatedValueMC.ToString();
-                Time_Cost_Display.Text = updatedValueTC.ToString() + " min";
+                Invoiced_Service_Cost_Display.Text = updatedValueSC.ToString();
             }
             
+        }
+
+        int getServiceFee(int time)
+        {
+            double ratio = (double)time / 60;
+            int serviceFee = (int)(ratio * 15000);
+            return serviceFee;
+        }
+
+        int RoundUpToMultipleOf30(int value)
+        {
+            return (int)(Math.Ceiling((double)value / 30) * 30);
         }
 
         private void Register_Btn_Click(object sender, EventArgs e)

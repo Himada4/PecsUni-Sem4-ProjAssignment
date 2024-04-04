@@ -14,12 +14,11 @@ namespace FM91U5.Payement
     public partial class Payment_Interface : Form
     {
         List<List<Work>> work_list;
-        TimeSpan timeElapsed;
-
-        public Payment_Interface(List<List<Work>> work_list, TimeSpan timeElapsed)
+        
+        public Payment_Interface(List<List<Work>> work_list)
         {
             this.work_list = work_list;
-            this.timeElapsed = timeElapsed;
+            
             InitializeComponent();
             
             FillForm();
@@ -33,39 +32,15 @@ namespace FM91U5.Payement
              * 
              * Total Material Cost:
              * Service Cost:
-             * Invoiced Service Cost:
+             * Invoiced Service Time:
              * Total:
+             * 
+             *  
              *
              * 
              */
 
-            //static
-            Label labelWSC = new Label();
-            Label labelWC = new Label();
-            Label labelTMC = new Label();
-            Label labelTST = new Label();
-            Label labelTSC = new Label();
-            Label labelT = new Label();
-
-            labelWSC.Text = "Registered Worksheets:";
-            labelWC.Text = "Registered Works:";
-            labelTMC.Text = "Total Material Cost:";
-            labelTST.Text = "Total Service Cost:";
-            labelTSC.Text = "Invoiced Service Cost:";
-            labelT.Text = "Total:";
-
-            List<Label> staticLables = new List<Label>() { labelWSC, labelWC, labelTMC, labelTST, labelTSC, labelT };
-
-            int Xpos = 10;
-            int Ypos = 10;
-            foreach (Label label in staticLables)
-            {
-                label.Location = new Point(Xpos, Ypos);
-                Ypos += 30;
-                Main_Container.Controls.Add(label);
-            }
-            Ypos = 10;
-            Xpos += 120;
+            
 
             //dynamic
             Label worksheetCount = new Label();     //
@@ -105,14 +80,15 @@ namespace FM91U5.Payement
             totalServiceCost.Text = serviceTime.ToString();
 
             //Total Usage Service Invoice
-            usageInvoice.Text = getFee().ToString();
-            
+            usageInvoice.Text = "s";//getFee().ToString();
+
             //Final Total Cost
-            total.Text = (materialCost + serviceCost + getFee()).ToString();
+            total.Text = (materialCost + serviceCost).ToString();// + getFee()).ToString();
 
             List<Label> labels = new List<Label>() { worksheetCount, workCount, totalMaterialCost, totalServiceCost, usageInvoice, total};
 
-            
+            int Xpos = 160;
+            int Ypos = 10;
             foreach (Label label in labels)
             {
                 label.Location = new Point(Xpos, Ypos);
@@ -121,15 +97,34 @@ namespace FM91U5.Payement
             }
         }
 
-        
-
-        private int getFee()
+        private void setStaticLabels()
         {
-            int totalMinutes = (int)Math.Ceiling(timeElapsed.TotalMinutes);
-            int chargeableBlocks = (totalMinutes + 29) / 30;
-            int fee = chargeableBlocks * 15000;
+            //static
+            Label labelWSC = new Label();
+            Label labelWC = new Label();
+            Label labelTMC = new Label();
+            Label labelTST = new Label();
+            Label labelTSC = new Label();
+            Label labelT = new Label();
 
-            return fee;
+            labelWSC.Text = "Registered Worksheets:";
+            labelWC.Text = "Registered Works:";
+            labelTMC.Text = "Total Material Cost:";
+            labelTST.Text = "Total Service Cost:";
+            labelTSC.Text = "Invoiced Service Time:";
+            labelT.Text = "Total:";
+
+            List<Label> staticLables = new List<Label>() { labelWSC, labelWC, labelTMC, labelTST, labelTSC, labelT };
+
+            int Xpos = 10;
+            int Ypos = 10;
+            foreach (Label label in staticLables)
+            {
+                label.Location = new Point(Xpos, Ypos);
+                Ypos += 30;
+                Main_Container.Controls.Add(label);
+            }
+
         }
     }
 }

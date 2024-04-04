@@ -39,8 +39,8 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.Service_Fee_Timer = new System.Windows.Forms.Timer(this.components);
             this.panel3 = new System.Windows.Forms.Panel();
+            this.Service_Fee_Timer = new System.Windows.Forms.Timer(this.components);
             this.menuStrip.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -124,10 +124,6 @@
             this.pictureBox1.TabIndex = 1;
             this.pictureBox1.TabStop = false;
             // 
-            // Service_Fee_Timer
-            // 
-            this.Service_Fee_Timer.Interval = 1000;
-            // 
             // panel3
             // 
             this.panel3.Dock = System.Windows.Forms.DockStyle.Left;
@@ -135,6 +131,10 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(10, 374);
             this.panel3.TabIndex = 0;
+            // 
+            // Service_Fee_Timer
+            // 
+            this.Service_Fee_Timer.Interval = 1000;
             // 
             // Main_Interface
             // 
@@ -151,7 +151,6 @@
             this.Name = "Main_Interface";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Car Service Application";
-            this.Load += new System.EventHandler(this.Main_Interface_Load);
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
             this.panel2.ResumeLayout(false);

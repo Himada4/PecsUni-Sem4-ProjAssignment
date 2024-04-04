@@ -48,14 +48,15 @@ namespace FM91U5
             works = updatedWorks;
             //Disable Worksheet, enable Payement or Load file
 
+            //prevent user from clicking worksheet again, oh wait just disable the worksheet button after "register" just do it
+
             works_list.Add(works);
         }
 
         private void paymentToolStripMenuItem_Click(object sender, EventArgs e)
         {
             
-            TimeSpan elapsedTime = DateTime.Now - startTime;
-            Payment_Interface payment_Interface = new Payment_Interface(works_list, elapsedTime);
+            Payment_Interface payment_Interface = new Payment_Interface(works_list);
             payment_Interface.Show();
         }
 
@@ -70,11 +71,6 @@ namespace FM91U5
             DialogResult dialogResult = MessageBox.Show("Are you sure you want to exit?", "Exit Application", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
             if (dialogResult == DialogResult.Yes) Application.Exit();
-        }
-
-        private void Main_Interface_Load(object sender, EventArgs e)
-        {
-            startTime = DateTime.Now;
         }
     }
 }
