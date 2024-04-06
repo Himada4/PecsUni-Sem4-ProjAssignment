@@ -53,8 +53,9 @@ namespace FM91U5
         {
             Worksheet_Interface worksheet_Interface = new Worksheet_Interface(works);
             worksheet_Interface.WorksheetUpdated += WorksheetUpdatedHandler;
-            worksheet_Interface.Show();
-            
+            worksheet_Interface.FormClosed += menuClosed;
+            menuStrip.Enabled = false;
+            worksheet_Interface.Show();            
         }
 
         private void WorksheetUpdatedHandler(object sender, List<Work> updatedWorks)
@@ -70,6 +71,8 @@ namespace FM91U5
         {
             
             Payment_Interface payment_Interface = new Payment_Interface(works_list);
+            payment_Interface.FormClosed += menuClosed;
+            menuStrip.Enabled = false;
             payment_Interface.Show();
             works_list.Clear();
             works.Clear();
@@ -93,6 +96,11 @@ namespace FM91U5
             DialogResult dialogResult = MessageBox.Show("Are you sure you want to exit?", "Exit Application", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
             if (dialogResult == DialogResult.No) e.Cancel = true;
+        }
+
+        private void menuClosed(object sender, EventArgs e)
+        {
+            menuStrip.Enabled = true;
         }
     }
 }
